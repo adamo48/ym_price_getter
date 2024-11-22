@@ -1,5 +1,5 @@
 from bs4 import BeautifulSoup
-import json, requests
+import json, requests, csv
 
 segments = {
     'Motocykle': {
@@ -28,8 +28,8 @@ segments = {
         'Cruising': 'https://hyperdrive.yamaha-motor.eu/products/yme-prod-pl?projectKey=yme-prod-pl&locale=pl-PL&query=categories.id:subtree(%2270ea6ace-29d3-42e4-842b-026a6aaf127f%22)&allFacets=variants.attributes.productWaveRunnersEngineSize:range+(0+to+*)%7Cvariants.attributes.productWaveRunnersSupercharger%7Cvariants.attributes.productWaveRunnersDryWeight:range+(0+to+*)&selectedFacets=&sort=variants.attributes.productIndex.asc%7Cvariants.attributes.productABBProductNameLocalized.asc%7Cvariants.attributes.productYear.desc&limit=72&offset=0&text=&productType=Unit&version=caas',
         'Rekreacja': 'https://hyperdrive.yamaha-motor.eu/products/yme-prod-pl?projectKey=yme-prod-pl&locale=pl-PL&query=categories.id:subtree(%227b5148f0-41c9-4410-97bb-027008a42c58%22)&allFacets=variants.attributes.productWaveRunnersEngineSize:range+(0+to+*)%7Cvariants.attributes.productWaveRunnersSupercharger%7Cvariants.attributes.productWaveRunnersDryWeight:range+(0+to+*)&selectedFacets=&sort=variants.attributes.productIndex.asc%7Cvariants.attributes.productABBProductNameLocalized.asc%7Cvariants.attributes.productYear.desc&limit=72&offset=0&text=&productType=Unit&version=caas'
     },
-    'Łodzie': {
-        'Łodzie otwarte': 'https://hyperdrive.yamaha-motor.eu/products/yme-prod-pl?projectKey=yme-prod-pl&locale=pl-PL&query=categories.id:subtree(%2285247593-4f97-41ab-9dd0-f5d4286a430c%22)&allFacets=variants.attributes.productBoatLength:range+(0+to+*)%7Cvariants.attributes.productBoatType%7Cvariants.attributes.productBoatBrand%7Cvariants.attributes.productBoatHorsepowerMinRange:range+(0+to+*)%7Cvariants.attributes.productBoatHorsepowerMaxRange:range+(0+to+*)&selectedFacets=&sort=variants.attributes.productIndex.asc%7Cvariants.attributes.productABBProductNameLocalized.asc%7Cvariants.attributes.productYear.desc&limit=72&offset=0&text=&productType=Unit&version=caas',
+    'Lodzie': {
+        'Lodzie otwarte': 'https://hyperdrive.yamaha-motor.eu/products/yme-prod-pl?projectKey=yme-prod-pl&locale=pl-PL&query=categories.id:subtree(%2285247593-4f97-41ab-9dd0-f5d4286a430c%22)&allFacets=variants.attributes.productBoatLength:range+(0+to+*)%7Cvariants.attributes.productBoatType%7Cvariants.attributes.productBoatBrand%7Cvariants.attributes.productBoatHorsepowerMinRange:range+(0+to+*)%7Cvariants.attributes.productBoatHorsepowerMaxRange:range+(0+to+*)&selectedFacets=&sort=variants.attributes.productIndex.asc%7Cvariants.attributes.productABBProductNameLocalized.asc%7Cvariants.attributes.productYear.desc&limit=72&offset=0&text=&productType=Unit&version=caas',
         'Bowrider': 'https://hyperdrive.yamaha-motor.eu/products/yme-prod-pl?projectKey=yme-prod-pl&locale=pl-PL&query=categories.id:subtree(%223baad1a9-f9e4-4a66-a8cf-40a0852ffe07%22)&allFacets=variants.attributes.productBoatLength:range+(0+to+*)%7Cvariants.attributes.productBoatType%7Cvariants.attributes.productBoatBrand%7Cvariants.attributes.productBoatHorsepowerMinRange:range+(0+to+*)%7Cvariants.attributes.productBoatHorsepowerMaxRange:range+(0+to+*)&selectedFacets=&sort=variants.attributes.productIndex.asc%7Cvariants.attributes.productABBProductNameLocalized.asc%7Cvariants.attributes.productYear.desc&limit=72&offset=0&text=&productType=Unit&version=caas',
         'Day Cruiser': 'https://hyperdrive.yamaha-motor.eu/products/yme-prod-pl?projectKey=yme-prod-pl&locale=pl-PL&query=categories.id:subtree(%2274bfee4c-e59e-4571-8f6b-ba1ffcf44cde%22)&allFacets=variants.attributes.productBoatLength:range+(0+to+*)%7Cvariants.attributes.productBoatType%7Cvariants.attributes.productBoatBrand%7Cvariants.attributes.productBoatHorsepowerMinRange:range+(0+to+*)%7Cvariants.attributes.productBoatHorsepowerMaxRange:range+(0+to+*)&selectedFacets=&sort=variants.attributes.productIndex.asc%7Cvariants.attributes.productABBProductNameLocalized.asc%7Cvariants.attributes.productYear.desc&limit=72&offset=0&text=&productType=Unit&version=caas',
         'Kabinowe': 'https://hyperdrive.yamaha-motor.eu/products/yme-prod-pl?projectKey=yme-prod-pl&locale=pl-PL&query=categories.id:subtree(%2228a496c4-7e74-4aa0-81d2-89e20751f22b%22)&allFacets=variants.attributes.productBoatLength:range+(0+to+*)%7Cvariants.attributes.productBoatType%7Cvariants.attributes.productBoatBrand%7Cvariants.attributes.productBoatHorsepowerMinRange:range+(0+to+*)%7Cvariants.attributes.productBoatHorsepowerMaxRange:range+(0+to+*)&selectedFacets=&sort=variants.attributes.productIndex.asc%7Cvariants.attributes.productABBProductNameLocalized.asc%7Cvariants.attributes.productYear.desc&limit=72&offset=0&text=&productType=Unit&version=caas',
@@ -52,50 +52,92 @@ segments = {
 }
 
 def main():
-    url = 'https://hyperdrive.yamaha-motor.eu/products/yme-prod-pl?projectKey=yme-prod-pl&locale=pl-PL&query=categories.id:subtree(%2212156529-af1a-423c-9139-e6f839019f8e%22)&allFacets=variants.attributes.productDriverLicenceCategory%7Cvariants.attributes.productMotorcyclePower:range+(0+to+*)%7Cvariants.attributes.productMotorcycleLimitedPowerVersion&selectedFacets=&sort=variants.attributes.productIndex.asc%7Cvariants.attributes.productABBProductNameLocalized.asc%7Cvariants.attributes.productYear.desc&limit=24&offset=0&text=&productType=Unit&version=caas'
+   # url = 'https://hyperdrive.yamaha-motor.eu/products/yme-prod-pl?projectKey=yme-prod-pl&locale=pl-PL&query=categories.id:subtree(%2212156529-af1a-423c-9139-e6f839019f8e%22)&allFacets=variants.attributes.productDriverLicenceCategory%7Cvariants.attributes.productMotorcyclePower:range+(0+to+*)%7Cvariants.attributes.productMotorcycleLimitedPowerVersion&selectedFacets=&sort=variants.attributes.productIndex.asc%7Cvariants.attributes.productABBProductNameLocalized.asc%7Cvariants.attributes.productYear.desc&limit=24&offset=0&text=&productType=Unit&version=caas'
+    
+    motour = Pricer(segments['Motocykle']['Hyper Naked'])
+    motour.get_products()
 
-    response = requests.get(url)
-    data = response.json()
-    for moto in data['results']:
-        name = moto['name']
-        try:
-            price = moto['variants'][0]['prices'][0]['amount']
-        except:
-            price = 0
+    #print(get_products(url))
+    print(motour)
+    
 
-        disclaimer = 'brak disclaimera'
-       
-        for attr in moto['variants'][0]['attributes']:
-            if attr['name'] == 'pricingDisclaimer':
-                disclaimer = attr['value']
-                break
+# def get_products(url):
+#     response = requests.get(url)
+#     data = response.json()
+#     with open('products.csv', 'w', newline='') as csvfile:
+#         writer = csv.writer(csvfile, delimiter=';')
+#         for moto in data['results']:
+#             name = moto['name']
+#             try:
+#                 price = moto['variants'][0]['prices'][0]['amount']
+#             except:
+#                 price = 0
 
-        year, pcm = None, None
-        for attr in moto['variants'][0]['attributes']:
-            
-            if attr['name'] == 'productYear':
-                year = attr['value']
-            elif attr['name'] == 'productPCMCode':
-                pcm = attr['value']
-               
-        print(name,'\n', year,'\n',pcm,'\n', price, '\n', disclaimer, '\n','\n')
-
-
-class pricer():
-    def __init__(self, link, name = None, price = None, disclaimer = ''):
-            self.link = link
-            self.name = name
-            self.price = price
-            self.disclaimer = disclaimer
-            self.response = response = requests.get(self.link)
-            
+#             disclaimer = 'brak disclaimera'
         
+#             for attr in moto['variants'][0]['attributes']:
+#                 if attr['name'] == 'pricingDisclaimer':
+#                     disclaimer = attr['value']
+#                     break
 
-    def get_price(self):
-      self.ele = self.soup.find("p", class_ = "")
+#             year, pcm = None, None
+#             for attr in moto['variants'][0]['attributes']:
+                
+#                 if attr['name'] == 'productYear':
+#                     year = attr['value']
+#                 elif attr['name'] == 'productPCMCode':
+#                     pcm = attr['value']
+                
+#             print(name,year,pcm, price, disclaimer)
+            
+#             writer.writerow((name,year,pcm,price,disclaimer))
 
-    def __repr__(self):
-        return f'name: {self.name}, price: {self.price}, disclaimer: {self.disclaimer}'
+# print(name,'\n', year,'\n',pcm,'\n', price, '\n', disclaimer, '\n','\n')
+
+
+class Pricer():
+    def __init__(self, url):
+            self.url = url
+            #self.response = response = requests.get(self.link)
+            self.repreza = []
+    
+    def get_products(self):
+        response = requests.get(self.url)
+        data = response.json()
+        with open('products.csv', 'w', newline='') as csvfile:
+            writer = csv.writer(csvfile, delimiter=';')
+            for moto in data['results']:
+                name = moto['name']
+                try:
+                    price = moto['variants'][0]['prices'][0]['amount']
+                except:
+                    price = 0
+
+                disclaimer = 'brak disclaimera'
+            
+                for attr in moto['variants'][0]['attributes']:
+                    if attr['name'] == 'pricingDisclaimer':
+                        disclaimer = attr['value']
+                        break
+
+                year, pcm = None, None
+                for attr in moto['variants'][0]['attributes']:
+                    
+                    if attr['name'] == 'productYear':
+                        year = attr['value']
+                    elif attr['name'] == 'productPCMCode':
+                        pcm = attr['value']
+                    
+                self.repreza.append((name,year,pcm, price,disclaimer))
+                #self.repreza.append(name)
+                writer.writerow((name,year,pcm,price,disclaimer))
+            
+
+    def __str__(self):
+        rul = ''
+        for i in self.repreza:
+            rul = rul + f'{i}\n'
+        return rul
     
 
 
