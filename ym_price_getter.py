@@ -8,7 +8,7 @@ segments = {
         'Sport Heritage': 'https://hyperdrive.yamaha-motor.eu/products/yme-prod-pl?projectKey=yme-prod-pl&locale=pl-PL&query=categories.id:subtree(%2238eae1fa-21fb-4bb1-b02a-b2738f3360f9%22)&allFacets=variants.attributes.productDriverLicenceCategory%7Cvariants.attributes.productMotorcyclePower:range+(0+to+*)%7Cvariants.attributes.productMotorcycleLimitedPowerVersion&selectedFacets=&sort=variants.attributes.productIndex.asc%7Cvariants.attributes.productABBProductNameLocalized.asc%7Cvariants.attributes.productYear.desc&limit=72&offset=0&text=&productType=Unit&version=caas',
         'Sport Touring': 'https://hyperdrive.yamaha-motor.eu/products/yme-prod-pl?projectKey=yme-prod-pl&locale=pl-PL&query=categories.id:subtree(%223ead3011-edc7-4407-9eb6-5413b85f9d1e%22)&allFacets=variants.attributes.productDriverLicenceCategory%7Cvariants.attributes.productMotorcyclePower:range+(0+to+*)%7Cvariants.attributes.productMotorcycleLimitedPowerVersion&selectedFacets=&sort=variants.attributes.productIndex.asc%7Cvariants.attributes.productABBProductNameLocalized.asc%7Cvariants.attributes.productYear.desc&limit=72&offset=0&text=&productType=Unit&version=caas',
         'Adventure': 'https://hyperdrive.yamaha-motor.eu/products/yme-prod-pl?projectKey=yme-prod-pl&locale=pl-PL&query=categories.id:subtree(%22f4dc4cbe-29b3-48cd-8e8f-6b6fa01714df%22)&allFacets=variants.attributes.productDriverLicenceCategory%7Cvariants.attributes.productMotorcyclePower:range+(0+to+*)%7Cvariants.attributes.productMotorcycleLimitedPowerVersion&selectedFacets=&sort=variants.attributes.productIndex.asc%7Cvariants.attributes.productABBProductNameLocalized.asc%7Cvariants.attributes.productYear.desc&limit=72&offset=0&text=&productType=Unit&version=caas',
-        'Off Road Competition': 'https://hyperdrive.yamaha-motor.eu/products/yme-prod-pl?projectKey=yme-prod-pl&locale=pl-PL&query=categories.id:subtree(%22f4dc4cbe-29b3-48cd-8e8f-6b6fa01714df%22)&allFacets=variants.attributes.productDriverLicenceCategory%7Cvariants.attributes.productMotorcyclePower:range+(0+to+*)%7Cvariants.attributes.productMotorcycleLimitedPowerVersion&selectedFacets=&sort=variants.attributes.productIndex.asc%7Cvariants.attributes.productABBProductNameLocalized.asc%7Cvariants.attributes.productYear.desc&limit=72&offset=0&text=&productType=Unit&version=caas'
+        'Off Road Competition': 'https://hyperdrive.yamaha-motor.eu/products/yme-prod-pl?projectKey=yme-prod-pl&locale=pl-PL&query=categories.id:subtree(%22dc7b6208-ce0c-4fec-9d87-06756d3b38c8%22)&allFacets=variants.attributes.productDriverLicenceCategory%7Cvariants.attributes.productMotorcyclePower:range+(0+to+*)%7Cvariants.attributes.productMotorcycleLimitedPowerVersion&selectedFacets=&sort=variants.attributes.productIndex.asc%7Cvariants.attributes.productABBProductNameLocalized.asc%7Cvariants.attributes.productYear.desc&limit=72&offset=0&text=&productType=Unit&version=caas'
     },
     'Skutery': {
         'Skutery Sport': 'https://hyperdrive.yamaha-motor.eu/products/yme-prod-pl?projectKey=yme-prod-pl&locale=pl-PL&query=categories.id:subtree(%2271eaed22-9731-4565-9482-ae38487452d4%22)&allFacets=variants.attributes.productScooterStorage%7Cvariants.attributes.productScooterPower:range+(0+to+*)%7Cvariants.attributes.productScooterEngine:range+(0+to+*)%7Cvariants.attributes.productDriverLicenceCategory&selectedFacets=&sort=variants.attributes.productIndex.asc%7Cvariants.attributes.productABBProductNameLocalized.asc%7Cvariants.attributes.productYear.desc&limit=72&offset=0&text=&productType=Unit&version=caas',
@@ -52,53 +52,17 @@ segments = {
 }
 
 def main():
-   # url = 'https://hyperdrive.yamaha-motor.eu/products/yme-prod-pl?projectKey=yme-prod-pl&locale=pl-PL&query=categories.id:subtree(%2212156529-af1a-423c-9139-e6f839019f8e%22)&allFacets=variants.attributes.productDriverLicenceCategory%7Cvariants.attributes.productMotorcyclePower:range+(0+to+*)%7Cvariants.attributes.productMotorcycleLimitedPowerVersion&selectedFacets=&sort=variants.attributes.productIndex.asc%7Cvariants.attributes.productABBProductNameLocalized.asc%7Cvariants.attributes.productYear.desc&limit=24&offset=0&text=&productType=Unit&version=caas'
+   
     
-    motour = Pricer(segments['Motocykle']['Hyper Naked'])
+    motour = Pricer(segments['Motocykle']['Off Road Competition'])
     motour.get_products()
-
-    #print(get_products(url))
     print(motour)
     
-
-# def get_products(url):
-#     response = requests.get(url)
-#     data = response.json()
-#     with open('products.csv', 'w', newline='') as csvfile:
-#         writer = csv.writer(csvfile, delimiter=';')
-#         for moto in data['results']:
-#             name = moto['name']
-#             try:
-#                 price = moto['variants'][0]['prices'][0]['amount']
-#             except:
-#                 price = 0
-
-#             disclaimer = 'brak disclaimera'
-        
-#             for attr in moto['variants'][0]['attributes']:
-#                 if attr['name'] == 'pricingDisclaimer':
-#                     disclaimer = attr['value']
-#                     break
-
-#             year, pcm = None, None
-#             for attr in moto['variants'][0]['attributes']:
-                
-#                 if attr['name'] == 'productYear':
-#                     year = attr['value']
-#                 elif attr['name'] == 'productPCMCode':
-#                     pcm = attr['value']
-                
-#             print(name,year,pcm, price, disclaimer)
-            
-#             writer.writerow((name,year,pcm,price,disclaimer))
-
-# print(name,'\n', year,'\n',pcm,'\n', price, '\n', disclaimer, '\n','\n')
 
 
 class Pricer():
     def __init__(self, url):
             self.url = url
-            #self.response = response = requests.get(self.link)
             self.repreza = []
     
     def get_products(self):
